@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import axios from 'axios';
+import Card from './component/Card'
 
-function App() {
+const App = () => {
+
+  const [burgers, setBurgers] = useState([])
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/burgers');
+      const dataRender = Object.keys(response.data.data).map(burger => response.data.data[burger]);
+      setBurgers(dataRender);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  useEffect(()=> {
+    fetchData()
+  }, [])
+
+  console.log(burgers)
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    
+    <h2>
+      Here's the list of burgers
+    </h2>
+    {burgers && burgers.map(burger => (
+      <Card key={burger.id} burger={burger}/>
+    ))}
+
     </div>
   );
 }
